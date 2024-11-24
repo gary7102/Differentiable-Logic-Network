@@ -1,5 +1,6 @@
 
 # <font color = "#F7A004">Logic network </font>
+先簡單介紹logic network再介紹diff logic network  
 
 LGNs 和 BNN的最大差異：
 LGNs 的核心是學習邏輯規則，例如「如果條件 A 和條件 B 成立，則輸出 1」。
@@ -7,9 +8,8 @@ LGNs 的核心是學習邏輯規則，例如「如果條件 A 和條件 B 成立
 網絡結構更像是邏輯電路，而非數值計算機(BNN)
 
 ## <font color = "green">Poblem</font>
-每個neuron輸出如果只是0 or 1的話，那就無法反映模型對於該class的信心程度，
-ex:
-輸出向量 [貓, 狗, 鳥] = [1,1,0]中「貓」和「狗」都有 1，無法區分優先選擇哪一個類別。 
+每個neuron輸出如果只是0 or 1的話，那就無法反映模型對於該class的信心程度，  
+ex: 輸出向量 [貓, 狗, 鳥] = [1,1,0]中「貓」和「狗」都有 1，無法區分優先選擇哪一個類別。 
 
 ## <font color = "green">Solution</font>
 對每個class使用多個神經元，以增加信心程度
@@ -26,37 +26,39 @@ ex:
 ## Core Idea
 原始的logic network需要在一開始就預先定義每個neuron的logic operation，也就是同一個neuron從頭到尾都是做`&`或是`|`或是`xor`，雖然這樣能對結果能夠著高度的解釋性，但不管是靈活性或是處理複雜情境都表現差勁
 
-因此difflogic出現，也就是將logic gates 先做relaxtion，將離散的logic operation成為可以微分的logic operation，如:
+因此difflogic出現，也就是將logic gates 先做relaxtion，將離散的logic operation成為可以微分的logic operation，如:  
+
 $$A \land B = A*B$$ $$A \lor B = A + B - A * B$$
 
-當logic gates可以微分之後，在訓練階段就可以使用gradient decent學習，學習甚麼?
+當logic gates可以微分之後，在訓練階段就可以使用gradient decent學習，學習甚麼?  
 **學習每個neuron 最適合使用甚麼logic operation**(機率分布)，到了推理階段，便直接選擇最適合的logic operation使用。
 
-<font size = 4>**訓練階段:**</font>
+<font size = 4>**訓練階段:**</font>  
 每個神經元對應一個邏輯操作（如 AND、OR、XOR 等），這些邏輯操作並不是一開始就固定的，而是由訓練階段來學習每個神經元的logic gate的機率分布，
 
-<font size = 4>**推理階段:**</font>
+<font size = 4>**推理階段:**</font>  
 在inference階段，模型不再使用概率分佈來表示邏輯操作，而是直接選擇每個神經元概率最高的邏輯操作作為固定的操作，如上panda圖中，選擇72
 
 
 ## <font color = green>Differentiable Logics</font>
 
-<font size = 4>**Step 1**</font>
+<font size = 4>**Step 1**</font>  
 傳統的logic network 屬於$a ∈ {0, 1}$, we relax all values to probabilistic activations $a ∈ [0, 1]$，也就是從輸入與輸出只能是0 or 1 ，relax to 0~1區間的連續實數，這樣可以用來描述「部分真」或「部分假」，即一個事件發生的機率。
 
-<font size = 4>**Step 2**</font>
+<font size = 4>**Step 2**</font>  
 將logic gates(and, or, xor)轉換為計算**期望值的機率分布公式**，如:
 
-When $A=0.8$ 且 $B= 0.6$，
-公式: $A \land B = A*B$
-則，
-$$A * B = 0.8*0.6 = 0.48$$
+When $A=0.8$ 且 $B= 0.6$，  
+公式: $A\land B = A*B$  
+則，  
 
-表示A和B同時發生的機率為48%，也就是說，在這個logic network中，事件$𝐴∧𝐵$的發生程度僅為「部分成立」，不是完全的 0 或 1。
+$$A * B = 0.8 * 0.6 = 0.48$$
+
+表示A和B同時發生的機率為48%，也就是說，在這個logic network中，事件 $𝐴∧𝐵$ 的發生程度僅為「部分成立」，不是完全的 0 或 1。
 
 <font size = 4>**Activation**</font>
 
-![image](https://hackmd.io/_uploads/rJeaHzkQJg.png)
+![image](https://hackmd.io/_uploads/rJeaHzkQJg.png)  
 如上面算到的0.48
 
 ## <font color = green>Differentiable Choice of Operator</font>
