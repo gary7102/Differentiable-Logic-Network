@@ -1,3 +1,26 @@
+
+# <font color = "#F7A004">Logic network </font>
+
+LGNs 和 BNN的最大差異：
+LGNs 的核心是學習邏輯規則，例如「如果條件 A 和條件 B 成立，則輸出 1」。
+它的計算基於邏輯操作，而非數值權重(BNN)。
+網絡結構更像是邏輯電路，而非數值計算機(BNN)
+
+## <font color = "green">Poblem</font>
+每個neuron輸出如果只是0 or 1的話，那就無法反映模型對於該class的信心程度，
+ex:
+例如，輸出向量 [貓, 狗, 鳥] = [1,1,0]中「貓」和「狗」都有 1，無法區分優先選擇哪一個類別。 
+
+## <font color = "green">Solution</font>
+對每個class使用多個神經元，以增加信心程度
+解決方法: 使用**多個神經元**為每個類別生成更多訊息(證據)，透過這些訊息(證據)求和實現更細緻的classfication
+ex:
+假設對於「貓」類別有 3 個神經元，其輸出分別為[1,0,1]，求和後的總和為2，表示對「貓」的信心程度為 2（越大代表越有信心）  
+
+![image](https://hackmd.io/_uploads/BJhwsg1Xkx.png)
+如上圖，panda及Gibbon這兩個class都使用2個neuron，透過bitcount(求和)之後 panda 信心程度為2，因此模型預測輸入圖像屬於Panda
+
+
 # <font color = "#F7A004">Differential Logic network </font>
 
 ## Core Idea
